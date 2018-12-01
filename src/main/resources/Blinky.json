@@ -1,0 +1,33 @@
+{
+  "stateActionMapping" : {
+    "GhostEdible:false;PacManNearby:true" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "ChasePacman"
+        },
+        "value" : 115840.23046875
+      } ]
+    },
+    "GhostEdible:false;PacManNearby:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "ExploreAsGhost"
+        },
+        "value" : 0.5
+      } ]
+    },
+    "GhostEdible:true;PacManNearby:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "ExploreAsGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "FleeFromPacman"
+        },
+        "value" : 1.0
+      } ]
+    }
+  }
+}

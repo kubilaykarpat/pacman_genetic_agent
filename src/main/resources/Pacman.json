@@ -1,0 +1,210 @@
+{
+  "stateActionMapping" : {
+    "GhostNearby:true;PowerPillNearby:false;PillNearby:true;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 0.0014972984790802002
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 22.696042551475777
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:false;PillNearby:false;Empowered:true" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 56733.88733354702
+      }, {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 0.08984375
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:true;PillNearby:true;Empowered:true" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 8518.842624664307
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:true;PillNearby:false;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 13.0
+      }, {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 1.0
+      } ]
+    },
+    "GhostNearby:false;PowerPillNearby:false;PillNearby:false;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 0.5
+      } ]
+    },
+    "GhostNearby:false;PowerPillNearby:true;PillNearby:true;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 1898.503293756098
+      }, {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 1462.301867138757
+      } ]
+    },
+    "GhostNearby:false;PowerPillNearby:false;PillNearby:true;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 968.8432833036127
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:false;PillNearby:false;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 0.015625
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:true;PillNearby:true;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 34.33984375
+      }, {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 3.0
+      }, {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 352.98828125
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:false;PillNearby:true;Empowered:true" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 0.8125
+      }, {
+        "action" : {
+          "name" : "GetNearestPill"
+        },
+        "value" : 48734.20443220027
+      } ]
+    },
+    "GhostNearby:false;PowerPillNearby:true;PillNearby:false;Empowered:false" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 61.3515625
+      }, {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 1.0
+      } ]
+    },
+    "GhostNearby:true;PowerPillNearby:true;PillNearby:false;Empowered:true" : {
+      "actionset" : [ {
+        "action" : {
+          "name" : "Explore"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "Flee"
+        },
+        "value" : 2.0
+      }, {
+        "action" : {
+          "name" : "ChaseGhost"
+        },
+        "value" : 1.0
+      }, {
+        "action" : {
+          "name" : "GetNearestPowerPill"
+        },
+        "value" : 1.0
+      } ]
+    }
+  }
+}
