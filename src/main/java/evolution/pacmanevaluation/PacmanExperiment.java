@@ -1,18 +1,17 @@
 package evolution.pacmanevaluation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import evolution.behaviortree.pacman.BehaviorTreePacman;
 import evolution.ghostevaluation.Statistics;
 import pacman.Executor;
 import pacman.controllers.examples.po.POCommGhosts;
 import pacman.game.util.Stats;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 public class PacmanExperiment {
@@ -128,31 +127,49 @@ public class PacmanExperiment {
 	public void evolve(){
 		this.evolve(NR_GENERATIONS, true);
 	}
-	
+
+	public static void simulate(String folder) {
+		int nrfiles = (new File(folder + "\\Pacman")).listFiles().length;
+
+		BehaviorTreePacman tree = BehaviorTreePacman.loadFromFile(folder + "\\Pacman\\Pacman" + (nrfiles - 1) + ".xml");
+		GAPacman pacman = new GAPacman(tree);
+
+		Executor po = new Executor.Builder()
+				.setPacmanPO(true)
+				.setGhostPO(true)
+				.setGhostsMessage(true)
+				.setGraphicsDaemon(true).build();
+
+		po.runGame(pacman, new POCommGhosts(50), 40);
+	}
+
 	public void determineFitness(Statistics evolution_statistics){
 		double bestFitness = 0;
 		double[] fitnessvalues = new double[FITNESSEVLUATIONS * pacmanindividuals.getSize()];
-		
+
 		BehaviorTreePacman bestPacman = new BehaviorTreePacman();
-	    
-        Executor po = new Executor(true, true, true);
-        po.setDaemon(true);	
+
+		Executor po = new Executor.Builder()
+				.setPacmanPO(true)
+				.setGhostPO(true)
+				.setGhostsMessage(true)
+				.setGraphicsDaemon(true).build();
         POCommGhosts ghosts = new POCommGhosts();
         GAPacman pacman;
-        
+
 		for (int i = 0; i < FITNESSEVLUATIONS; i++){
 			pacmanindividuals.shuffle();
-			
+
 			for (int j = 0; j < pacmanindividuals.getSize(); j++){
 				pacman = new GAPacman(pacmanindividuals.getIndividual(j));
-		        
-		        Stats[] stats = po.runExperiment(pacman, ghosts, TESTRUNS, "test");
+
+				Stats[] stats = po.runExperiment(pacman, ghosts, TESTRUNS, "test");
 		        double fitness = stats[0].getAverage();
 		        fitnessvalues[j + i*pacmanindividuals.getSize()] = fitness;
-		        
-		        pacmanindividuals.getIndividual(j).addFitnessValue(fitness);
-		        
-		        if (fitness > bestFitness){
+
+				pacmanindividuals.getIndividual(j).addFitnessValue(fitness);
+
+				if (fitness > bestFitness){
 		        	bestFitness = fitness;
 		        	bestPacman = pacmanindividuals.getIndividual(j);
 		        }
@@ -162,20 +179,8 @@ public class PacmanExperiment {
 		for (int i = 0; i < fitnessvalues.length; i++)
 			sum += fitnessvalues[i];
 		double averagefitness = sum/(FITNESSEVLUATIONS * pacmanindividuals.getSize());
-		
+
 		evolution_statistics.addGenerationPacman(bestFitness, averagefitness, bestPacman);
-	}
-
-	public static void simulate(String folder){
-		int nrfiles = (new File(folder + "\\Pacman")).listFiles().length;
-
-		BehaviorTreePacman tree = BehaviorTreePacman.loadFromFile(folder + "\\Pacman\\Pacman" + (nrfiles -1) + ".xml");
-		GAPacman pacman = new GAPacman(tree);
-
-		Executor po = new Executor(true, true, true);
-        po.setDaemon(true);	
-        
-        po.runGame(pacman, new POCommGhosts(50), true, 40);
 	}
 	
 	

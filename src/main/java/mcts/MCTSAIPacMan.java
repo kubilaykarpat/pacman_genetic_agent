@@ -1,20 +1,19 @@
 package mcts;
 
-import java.util.Arrays;
-
 import pacman.Executor;
 import pacman.controllers.PacmanController;
 import pacman.controllers.examples.po.POCommGhosts;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
+import java.util.Arrays;
+
 
 public class MCTSAIPacMan extends PacmanController {
 
     public static void main(String[] args) {
-        Executor po = new Executor(true, true, true);
-        po.setDaemon(true);
-        po.runGame(new MCTSAIPacMan(), new POCommGhosts(50), true, 40);
+		Executor po = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setGhostsMessage(true).setGraphicsDaemon(true).build();
+		po.runGame(new MCTSAIPacMan(), new POCommGhosts(50), 40);
         
         /*
         Stats[] stats = po.runExperiment(new MCTSAIPacMan(), new POCommGhosts(50), 3, "test");

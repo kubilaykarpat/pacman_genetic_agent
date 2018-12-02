@@ -1,17 +1,14 @@
 package entrants;
 
-import entrants.pacman.username.MyPacMan;
 import examples.StarterGhostComm.Blinky;
 import examples.StarterGhostComm.Inky;
 import examples.StarterGhostComm.Pinky;
 import examples.StarterGhostComm.Sue;
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.variable.EncodingUtils;
-import org.moeaframework.core.variable.RealVariable;
 import org.moeaframework.problem.AbstractProblem;
 import pacman.Executor;
 import pacman.controllers.IndividualGhostController;
-import pacman.controllers.MASController;
 import pacman.game.Constants;
 
 import java.util.EnumMap;
@@ -35,7 +32,7 @@ public class TheEA extends AbstractProblem {
     }
     @Override
     public void evaluate(Solution solution) {
-        Executor executor = new Executor(true, true);
+        Executor executor = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setScaleFactor(1.5).build();
 
         EnumMap<Constants.GHOST, IndividualGhostController> controllers = new EnumMap<>(Constants.GHOST.class);
 
@@ -43,7 +40,6 @@ public class TheEA extends AbstractProblem {
         controllers.put(Constants.GHOST.BLINKY, new Blinky());
         controllers.put(Constants.GHOST.PINKY, new Pinky());
         controllers.put(Constants.GHOST.SUE, new Sue());
-        executor.setScaleFactor(1.5);
 
 //        executor.runGameTimed(new MyPacMan(solution,numberOfMaxParameters), new MASController(controllers), true);
         //double obj = (double)executor.runGame(new MyPacMan(solution,numberOfMaxParameters,numberOfDecisionLength,numberOfActions), new MASController(controllers), true,10);

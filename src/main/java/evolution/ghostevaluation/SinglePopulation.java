@@ -1,19 +1,17 @@
 package evolution.ghostevaluation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import evolution.behaviortree.ghosts.BehaviorTree;
 import evolution.ghosts.GAGhosts;
-import examples.StarterPacMan.MyPacMan;
 import mcts.MCTSAIPacMan;
 import pacman.Executor;
 import pacman.game.util.Stats;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class SinglePopulation {
 
@@ -131,33 +129,47 @@ public class SinglePopulation {
 	public void evolve(){
 		this.evolve(NR_GENERATIONS, true);
 	}
-	
+
+    public static void simulate(String folder) {
+        int filesPerGhost = (new File(folder + "\\Ghosts")).listFiles().length / 4;
+
+        BehaviorTree tree1 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Blinky" + (filesPerGhost - 1) + ".xml");
+        BehaviorTree tree2 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Inky" + (filesPerGhost - 1) + ".xml");
+        BehaviorTree tree3 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Pinky" + (filesPerGhost - 1) + ".xml");
+        BehaviorTree tree4 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Sue" + (filesPerGhost - 1) + ".xml");
+
+        GAGhosts ghosts = new GAGhosts(tree1, tree2, tree3, tree4);
+        Executor po = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setGhostsMessage(true).setGraphicsDaemon(true).build();
+        //po.runGame(new MCTSAIPacMan(), ghosts, 40);
+        po.runGame(new MCTSAIPacMan(), ghosts, 40);
+
+    }
+
 	public void determineFitness(Statistics evolution_statistics){
 		double bestFitness = Double.MAX_VALUE;
 		double[] fitnessvalues = new double[FITNESSEVLUATIONS * pop.getSize()];
-		
+
 		LinkedList<BehaviorTree> bestTeam = new LinkedList<BehaviorTree>();
-	    
-        Executor po = new Executor(true, true, true);
-        po.setDaemon(true);	
+
+        Executor po = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setGhostsMessage(true).setGraphicsDaemon(true).build();
         GAGhosts ghosts;
-        
-		for (int i = 0; i < FITNESSEVLUATIONS; i++){
+
+        for (int i = 0; i < FITNESSEVLUATIONS; i++){
 			pop.shuffle();
-			
-			for (int j = 0; j < pop.getSize()/4; j++){
+
+            for (int j = 0; j < pop.getSize()/4; j++){
 				ghosts = new GAGhosts(pop.getIndividual(j),pop.getIndividual(j+250),pop.getIndividual(j+500),pop.getIndividual(j+750));
-		        
-		        Stats[] stats = po.runExperiment(new MCTSAIPacMan(), ghosts, TESTRUNS, "test");
+
+                Stats[] stats = po.runExperiment(new MCTSAIPacMan(), ghosts, TESTRUNS, "test");
 		        double fitness = stats[0].getAverage();
 		        fitnessvalues[j + i*pop.getSize()] = fitness;
-		        
-		        pop.getIndividual(j).addFitnessValue(fitness);
+
+                pop.getIndividual(j).addFitnessValue(fitness);
 		        pop.getIndividual(j+250).addFitnessValue(fitness);
 		        pop.getIndividual(j+500).addFitnessValue(fitness);
 		        pop.getIndividual(j+750).addFitnessValue(fitness);
-		        
-		        if (fitness < bestFitness){
+
+                if (fitness < bestFitness){
 		        	bestFitness = fitness;
 		        	bestTeam.clear();
 		        	bestTeam.add(pop.getIndividual(j));
@@ -171,24 +183,8 @@ public class SinglePopulation {
 		for (int i = 0; i < fitnessvalues.length; i++)
 			sum += fitnessvalues[i];
 		double averagefitness = sum/(FITNESSEVLUATIONS * pop.getSize()/4);
-		
-		evolution_statistics.addGenerationGhosts(bestFitness, averagefitness, bestTeam);
-	}
 
-	public static void simulate(String folder){
-		int filesPerGhost = (new File(folder + "\\Ghosts")).listFiles().length / 4;
-
-		BehaviorTree tree1 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Blinky" + (filesPerGhost -1) + ".xml");
-		BehaviorTree tree2 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Inky" + (filesPerGhost -1) + ".xml");
-		BehaviorTree tree3 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Pinky" + (filesPerGhost -1) + ".xml");
-		BehaviorTree tree4 = BehaviorTree.loadFromFile(folder + "\\Ghosts\\Sue" + (filesPerGhost -1) + ".xml");
-
-		GAGhosts ghosts = new GAGhosts(tree1, tree2, tree3, tree4);
-		Executor po = new Executor(true, true, true);
-        po.setDaemon(true);	
-        //po.runGame(new MCTSAIPacMan(), ghosts, true, 40);
-        po.runGame(new MCTSAIPacMan(), ghosts, true, 40);
-
+        evolution_statistics.addGenerationGhosts(bestFitness, averagefitness, bestTeam);
 	}
 	
 	

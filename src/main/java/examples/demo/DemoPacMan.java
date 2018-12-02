@@ -18,9 +18,8 @@ import static pacman.game.Constants.MOVE;
  */
 public class DemoPacMan extends PacmanController {
     public static void main(String[] args) {
-        Executor po = new Executor(true, true, true);
-        po.setDaemon(true);
-        po.runGame(new DemoPacMan(), new POCommGhosts(50), true, 40);
+        Executor po = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setGhostsMessage(true).setGraphicsDaemon(true).build();
+        po.runGame(new DemoPacMan(), new POCommGhosts(50), 40);
     }
 
     @Override

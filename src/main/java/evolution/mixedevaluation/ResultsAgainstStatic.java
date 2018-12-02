@@ -1,17 +1,7 @@
 package evolution.mixedevaluation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import evolution.behaviortree.ghosts.BehaviorTree;
 import evolution.behaviortree.pacman.BehaviorTreePacman;
-import evolution.ghostevaluation.Population;
 import evolution.ghostevaluation.Statistics;
 import evolution.ghosts.GAGhosts;
 import evolution.pacmanevaluation.GAPacman;
@@ -20,6 +10,9 @@ import examples.StarterPacMan.MyPacMan;
 import pacman.Executor;
 import pacman.controllers.examples.po.POCommGhosts;
 import pacman.game.util.Stats;
+
+import java.io.File;
+import java.util.logging.Logger;
 
 public class ResultsAgainstStatic {
 	
@@ -33,8 +26,7 @@ public class ResultsAgainstStatic {
 
 	
 	public ResultsAgainstStatic(String folder){
-		Executor po = new Executor(true, true, true);
-        po.setDaemon(true);	
+		Executor po = new Executor.Builder().setPacmanPO(true).setGhostPO(true).setGhostsMessage(true).setGraphicsDaemon(true).build();
         
 		int filesPerGhost = (new File(folder + "\\Ghosts")).listFiles().length / 4;
 		this.evolution_statistics = new Statistics(filesPerGhost);

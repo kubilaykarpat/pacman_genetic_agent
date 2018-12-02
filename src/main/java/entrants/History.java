@@ -1,6 +1,6 @@
 package entrants;
 
-import entrants.pacman.username.MyPacMan;
+import pacman.controllers.PacmanController;
 import pacman.game.Constants;
 import pacman.game.Game;
 
@@ -14,7 +14,7 @@ public class History {
     int maxHistoryEntries;
     public HistoryEntry[] history;
     public HistoryEntry lastEntry;
-    private MyPacMan mpm;
+    private PacmanController mpm;
     public int[] lastGhostsNodeIndex;//[0][] -> nodeIndex; [1][] -> time
     int h;
 
@@ -53,7 +53,7 @@ public class History {
         return lastSeenGhostDistance;
     }
 
-    public History(int length, MyPacMan myPacMan){
+    public History(int length, PacmanController myPacMan) {
         this.mpm = myPacMan;
         h = 0;
         maxHistoryEntries = length;
