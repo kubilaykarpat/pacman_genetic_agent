@@ -37,7 +37,7 @@ public class MyPacMan extends PacmanController {
             Game forwardCopy = coGame.copy();
             // Have to forward once before the loop - so that we aren't on a junction
             forwardCopy.advanceGame(move, ghosts.getMove(forwardCopy.copy(), 40));
-            while(!forwardCopy.isJunction(forwardCopy.getPacmanCurrentNodeIndex())){
+            while (!forwardCopy.isJunction(forwardCopy.getPacmanCurrentNodeIndex())) {
                 forwardCopy.advanceGame(move, ghosts.getMove(forwardCopy.copy(), 40));
             }
             int score = forwardCopy.getScore();

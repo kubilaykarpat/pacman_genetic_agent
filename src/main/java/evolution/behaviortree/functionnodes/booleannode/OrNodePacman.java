@@ -6,43 +6,42 @@ import evolution.behaviortree.terminalnodes.booleannode.BooleanTerminalNodePacma
 import evolution.behaviortree.terminalnodes.booleannode.StaticBooleanTerminalNodePacman;
 
 
-public class OrNodePacman extends BiVariateBooleanOperatorPacman {
+public class OrNodePacman extends BiVariateBooleanOperatorNodePacman {
 
-	public OrNodePacman()
-	{
-		this(BooleanTerminalNodePacman.createRandom(), BooleanTerminalNodePacman.createRandom());
-	}
-	
-	@Override
-	public OrNodePacman copy(){
-		return new OrNodePacman(this.firstCond.copy(), this.secondCond.copy());
-	}
-	
-	public OrNodePacman(BehaviorNodePacman firstCond, BehaviorNodePacman secondCond){
-		this.firstCond = firstCond;
-		this.secondCond = secondCond;
-		this.target = TargetPacman.Boolean;
-	}
-	
-	@Override
-	public BehaviorNodePacman eval(ExtendedGame extendedgame) {
-		if (((BooleanTerminalNodePacman)firstCond.eval(extendedgame)).getData(extendedgame) || 
-				((BooleanTerminalNodePacman)secondCond.eval(extendedgame)).getData(extendedgame))
-			return StaticBooleanTerminalNodePacman.trueNode;
-		return StaticBooleanTerminalNodePacman.falseNode;
-	}
+    public OrNodePacman() {
+        this(BooleanTerminalNodePacman.createRandom(), BooleanTerminalNodePacman.createRandom());
+    }
 
-	@Override
-	public void disp(int depth) {
-		String str = "<OrNode>";
-		String padded = String.format("%1$" + (4*depth + str.length()) + "s", str);
-		System.out.println(padded);
+    public OrNodePacman(BehaviorNodePacman firstCond, BehaviorNodePacman secondCond) {
+        this.firstCond = firstCond;
+        this.secondCond = secondCond;
+        this.target = TargetPacman.Boolean;
+    }
 
-		firstCond.disp(depth+1);
-		secondCond.disp(depth+1);
-		
-		str = "</OrNode>";
-		padded = String.format("%1$" + (4*depth + str.length()) + "s", str);
-		System.out.println(padded);
-	}
+    @Override
+    public OrNodePacman copy() {
+        return new OrNodePacman(this.firstCond.copy(), this.secondCond.copy());
+    }
+
+    @Override
+    public BehaviorNodePacman eval(ExtendedGame extendedgame) {
+        if (((BooleanTerminalNodePacman) firstCond.eval(extendedgame)).getData(extendedgame) ||
+                ((BooleanTerminalNodePacman) secondCond.eval(extendedgame)).getData(extendedgame))
+            return StaticBooleanTerminalNodePacman.trueNode;
+        return StaticBooleanTerminalNodePacman.falseNode;
+    }
+
+    @Override
+    public void disp(int depth) {
+        String str = "<OrNode>";
+        String padded = String.format("%1$" + (4 * depth + str.length()) + "s", str);
+        System.out.println(padded);
+
+        firstCond.disp(depth + 1);
+        secondCond.disp(depth + 1);
+
+        str = "</OrNode>";
+        padded = String.format("%1$" + (4 * depth + str.length()) + "s", str);
+        System.out.println(padded);
+    }
 }

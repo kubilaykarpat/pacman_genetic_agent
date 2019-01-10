@@ -5,7 +5,7 @@ import evolution.behaviortree.BehaviorNodePacman;
 import evolution.behaviortree.terminalnodes.booleannode.BooleanTerminalNodePacman;
 import evolution.behaviortree.terminalnodes.booleannode.StaticBooleanTerminalNodePacman;
 
-public class XorNodePacman extends BiVariateBooleanOperatorPacman {
+public class XorNodePacman extends BiVariateBooleanOperatorNodePacman {
 
     public XorNodePacman() {
         this(BooleanTerminalNodePacman.createRandom(), BooleanTerminalNodePacman.createRandom());

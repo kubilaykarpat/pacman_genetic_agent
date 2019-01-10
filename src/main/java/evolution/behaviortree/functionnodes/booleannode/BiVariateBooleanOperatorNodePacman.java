@@ -3,11 +3,12 @@ package evolution.behaviortree.functionnodes.booleannode;
 import evolution.behaviortree.BehaviorNodePacman;
 import evolution.behaviortree.functionnodes.FunctionNodePacman;
 import evolution.behaviortree.terminalnodes.booleannode.BooleanTerminalNodePacman;
+import util.Utils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class BiVariateBooleanOperatorPacman extends FunctionNodePacman {
+public abstract class BiVariateBooleanOperatorNodePacman extends FunctionNodePacman {
     protected BehaviorNodePacman firstCond;
     protected BehaviorNodePacman secondCond;
 
@@ -34,7 +35,7 @@ public abstract class BiVariateBooleanOperatorPacman extends FunctionNodePacman 
 
     @Override
     public void mutate() {
-        switch (BehaviorNodePacman.RANDOM.nextInt(4)) {
+        switch (Utils.RANDOM.nextInt(4)) {
             case 0:
                 this.firstCond = BooleanTerminalNodePacman.createRandom();
                 break;
@@ -49,5 +50,19 @@ public abstract class BiVariateBooleanOperatorPacman extends FunctionNodePacman 
                 break;
         }
 
+    }
+
+    @Override
+    public void overrideChildren(int whichChildren, BehaviorNodePacman newSubTree) {
+        switch (whichChildren) {
+            case 0:
+                this.firstCond = newSubTree;
+                break;
+            case 1:
+                this.secondCond = newSubTree;
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("%s has no %sth children.", this.getClass().getName(), whichChildren));
+        }
     }
 }

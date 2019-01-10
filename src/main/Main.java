@@ -1,4 +1,3 @@
-
 import examples.StarterGhostComm.Blinky;
 import examples.StarterGhostComm.Inky;
 import examples.StarterGhostComm.Pinky;
