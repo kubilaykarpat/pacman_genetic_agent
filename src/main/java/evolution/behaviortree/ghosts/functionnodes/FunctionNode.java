@@ -19,8 +19,8 @@ public abstract class FunctionNode extends BehaviorNode {
 			case 3: return new XorNode();
 			case 4: return new IfElseNode(Target.Boolean);
 			case 5: return new IfLessThanElseNode(Target.Boolean);
-			default: 
-				System.out.println("you fucked up mate, createRandomBooleanTarget");
+			default:
+                System.out.println("you screwed up mate, createRandomBooleanTarget");
 				return null;	
 		}
 	}
@@ -30,7 +30,7 @@ public abstract class FunctionNode extends BehaviorNode {
 			case 0: return new IfElseNode(Target.Numerical);
 			case 1: return new IfLessThanElseNode(Target.Numerical);
 			default:
-				System.out.println("you fucked up mate, createRandomNumericalTarget");
+                System.out.println("you screwed up mate, createRandomNumericalTarget");
 				return null;	
 		}
 	}

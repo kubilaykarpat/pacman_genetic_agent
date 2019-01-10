@@ -1,22 +1,16 @@
 package evolution.behaviortree.pacman;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
-
 import evolution.behaviortree.pacman.functionnodes.FunctionNodePacman;
 import evolution.behaviortree.pacman.terminalnodes.actionnodes.ActionTerminalNodePacman;
 import evolution.ghostevaluation.Genotype;
 import evolution.pacmanevaluation.ExtendedGamePacman;
 import pacman.game.Constants.MOVE;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacman> {
 
@@ -65,7 +59,7 @@ public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacm
 	
 	public void mutate(){
 		List<BehaviorNodePacman> nodes = this.getNonterminalNodes();
-		nodes.get(RANDOM.nextInt(nodes.size())).mutate();;	
+        nodes.get(RANDOM.nextInt(nodes.size())).mutate();
 	}
 	
 	public BehaviorNodePacman getRandomNode(){

@@ -19,8 +19,8 @@ public abstract class FunctionNodePacman extends BehaviorNodePacman {
 			case 3: return new XorNodePacman();
 			case 4: return new IfElseNodePacman(TargetPacman.Boolean);
 			case 5: return new IfLessThanElseNodePacman(TargetPacman.Boolean);
-			default: 
-				System.out.println("you fucked up mate, createRandomBooleanTarget");
+			default:
+                System.out.println("you screwed up mate, createRandomBooleanTarget");
 				return null;	
 		}
 	}
@@ -30,7 +30,7 @@ public abstract class FunctionNodePacman extends BehaviorNodePacman {
 			case 0: return new IfElseNodePacman(TargetPacman.Numerical);
 			case 1: return new IfLessThanElseNodePacman(TargetPacman.Numerical);
 			default:
-				System.out.println("you fucked up mate, createRandomNumericalTarget");
+                System.out.println("you screwed up mate, createRandomNumericalTarget");
 				return null;	
 		}
 	}
