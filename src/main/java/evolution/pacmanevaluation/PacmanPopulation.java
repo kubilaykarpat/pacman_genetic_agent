@@ -1,11 +1,11 @@
 package evolution.pacmanevaluation;
 
+import evolution.behaviortree.pacman.BehaviorTreePacman;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-import evolution.behaviortree.pacman.BehaviorTreePacman;
 
 public class PacmanPopulation {
 
@@ -18,9 +18,9 @@ public class PacmanPopulation {
 	Random RANDOM = new Random();
 	
 	public PacmanPopulation(int size){
-		this.individuals = new LinkedList<BehaviorTreePacman>();
+        this.individuals = new LinkedList<>();
 		for (int i = 0; i<size; i++){
-			individuals.add(new BehaviorTreePacman());
+            individuals.add(BehaviorTreePacman.createRandomBehaviourTreePacman());
 		}
 		this.population_size = size;
 		this.ELITISMDEGREE = Math.max(1, size/3);

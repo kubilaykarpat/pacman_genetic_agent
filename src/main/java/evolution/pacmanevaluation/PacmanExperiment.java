@@ -147,7 +147,7 @@ public class PacmanExperiment {
 		double bestFitness = 0;
 		double[] fitnessvalues = new double[FITNESSEVLUATIONS * pacmanindividuals.getSize()];
 
-		BehaviorTreePacman bestPacman = new BehaviorTreePacman();
+        BehaviorTreePacman bestPacman = BehaviorTreePacman.createRandomBehaviourTreePacman();
 
 		Executor po = new Executor.Builder()
 				.setPacmanPO(true)

@@ -17,21 +17,23 @@ public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacm
 	
 	BehaviorNodePacman root;
 	private static final Random RANDOM = new Random();
-	private List<Double> fitnesslist;
-	
-	public BehaviorTreePacman(){
-		this(FunctionNodePacman.createRandomActionTarget()); 
+    private List<Double> fitnessList;
+
+    private BehaviorTreePacman(BehaviorNodePacman root) {
+        this.root = root;
+        this.fitnessList = new LinkedList<>();
+    }
+
+
+    public static BehaviorTreePacman createRandomBehaviourTreePacman() {
+        return new BehaviorTreePacman(FunctionNodePacman.createRandomActionTarget());
 	}
 	
 	public BehaviorTreePacman copy(){
 		return new BehaviorTreePacman(this.root.copy());
 	}
 	
-	BehaviorTreePacman(BehaviorNodePacman root){
-		this.root = root;
-		this.fitnesslist = new LinkedList<Double>();
-	}
-	
+
 	public MOVE eval(ExtendedGamePacman game){
 		return ((ActionTerminalNodePacman)this.root.eval(game)).getAction(game);
 	}
@@ -69,11 +71,11 @@ public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacm
 
 	@Override
 	public double getFitness() {
-		return calculateAverage(fitnesslist);
+        return calculateAverage(fitnessList);
 	}
 
 	public void clearFitness() {
-		this.fitnesslist.clear();
+        this.fitnessList.clear();
 	}
 
 	
@@ -97,7 +99,7 @@ public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacm
 	
 	@Override
 	public void addFitnessValue(double fitness) {
-		fitnesslist.add(fitness);
+        fitnessList.add(fitness);
 		
 	}
 	
@@ -149,48 +151,4 @@ public class BehaviorTreePacman implements Genotype, Comparable<BehaviorTreePacm
 		
 		
 	}
-
-	public static void main(String[] args){
-		BehaviorTreePacman tree = new BehaviorTreePacman();
-		System.out.println(tree);
-		
-		List<BehaviorNodePacman> nodelist = tree.getNodes();
-		System.out.println("#nodes: " + nodelist.size());
-		System.out.println(nodelist);
-		System.out.println();
-		
-		List<BehaviorNodePacman> nonterminalnodelist = tree.getNonterminalNodes();
-		System.out.println(nonterminalnodelist);
-		System.out.println("#nonterminal nodes: " + nonterminalnodelist.size());
-		System.out.println();
-
-		BehaviorNodePacman node = tree.getRandomNode();
-		node.disp(0);
-		System.out.println();
-		
-		System.out.println("Mutated tree:");
-		for (int i = 0; i < 1000; i++)
-			tree.mutate();
-		System.out.println(tree);
-		
-		System.out.println("Copied tree:");
-		BehaviorTreePacman copiedtree = tree.copy();
-		System.out.println(copiedtree);
-		
-		
-		System.out.println("Check if Deep Copy worked:");
-		System.out.println("Mutated tree:");
-		for (int i = 0; i < 10; i++)
-			tree.mutate();
-		System.out.println(tree);
-		System.out.println();
-		
-		System.out.println("Copied Tree");
-		System.out.println(copiedtree);
-		
-		tree.storeToFile("evaluation" + File.separator + "tree.xml");
-		loadFromFile("evaluation" + File.separator + "tree.xml");
-		//System.out.println(tree);
-	}
-
 }
