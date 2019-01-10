@@ -1,14 +1,15 @@
 package evolution.behaviortree.pacman.terminalnodes.actionnodes;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import evolution.behaviortree.pacman.BehaviorNodePacman;
+import evolution.behaviortree.pacman.functionnodes.FunctionNodePacman;
 import evolution.behaviortree.pacman.terminalnodes.TerminalNodePacman;
 import evolution.pacmanevaluation.ExtendedGamePacman;
 import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ActionTerminalNodePacman extends TerminalNodePacman {
 
@@ -35,8 +36,13 @@ public class ActionTerminalNodePacman extends TerminalNodePacman {
 	public ActionTerminalNodePacman copy() {
 		return new ActionTerminalNodePacman(this.terminal);
 	}
- 
-	
+
+	@Override
+	public FunctionNodePacman.TargetPacman getTarget() {
+		return FunctionNodePacman.TargetPacman.Action;
+	}
+
+
 	public MOVE getAction(ExtendedGamePacman extendedgame){
 		MOVE move = MOVE.NEUTRAL;
         int[] powerPills = extendedgame.game.getPowerPillIndices();

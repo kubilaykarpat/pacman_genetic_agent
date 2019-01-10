@@ -44,4 +44,8 @@ public abstract class FunctionNodePacman extends BehaviorNodePacman {
 		}
 	}
 
+	public TargetPacman getTarget() {
+		return this.target;
+	}
+
 }

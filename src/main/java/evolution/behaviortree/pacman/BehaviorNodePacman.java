@@ -214,4 +214,6 @@ public abstract class BehaviorNodePacman {
 		System.out.println("Invalid Line:" + line);
 		return null;
 	}
+
+	public abstract TargetPacman getTarget();
 }

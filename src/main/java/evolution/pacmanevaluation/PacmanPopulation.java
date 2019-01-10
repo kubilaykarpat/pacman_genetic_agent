@@ -1,5 +1,6 @@
 package evolution.pacmanevaluation;
 
+import evolution.behaviortree.pacman.BehaviorNodePacman;
 import evolution.behaviortree.pacman.BehaviorTreePacman;
 
 import java.util.Collections;
@@ -11,9 +12,10 @@ public class PacmanPopulation {
 
 	public List<BehaviorTreePacman> individuals;
 	int population_size;
-	
-	
-	private int ELITISMDEGREE;
+
+
+	private final int numberOfElites;
+	private final int numberOfCrossOvers;
 	
 	Random RANDOM = new Random();
 	
@@ -23,7 +25,9 @@ public class PacmanPopulation {
             individuals.add(BehaviorTreePacman.createRandomBehaviourTreePacman());
 		}
 		this.population_size = size;
-		this.ELITISMDEGREE = Math.max(1, size/3);
+		this.numberOfElites = Math.max(1, size / 3); // We will keep size/3 best individuals
+		this.numberOfCrossOvers = Math.max(1, (size - numberOfElites) / 2); // We will create size/3 individuals with cross over
+		// Rest of the individuals will be created by mutation
 	}
 	
 	
@@ -41,14 +45,23 @@ public class PacmanPopulation {
 		// natural selection
 		Collections.sort(individuals);
 
-		individuals = individuals.subList(0, ELITISMDEGREE);
+		individuals = individuals.subList(0, numberOfElites);
+	}
+
+	private void crossOver() {
+		while (this.individuals.size() < numberOfElites + numberOfCrossOvers) {
+			BehaviorTreePacman firstTree = this.individuals.get(RANDOM.nextInt(numberOfElites));
+			List<BehaviorNodePacman> nodesOfFirstTree = firstTree.getNodes();
+			BehaviorNodePacman cutPointFromFirstTree =
+
+		}
 	}
 	
 	private void mutation(){
 		BehaviorTreePacman mutation;
 		
 		while (this.individuals.size() < population_size){
-			mutation = this.individuals.get(RANDOM.nextInt(ELITISMDEGREE)).copy();
+			mutation = this.individuals.get(RANDOM.nextInt(numberOfElites)).copy();
 			mutation.mutate();
 			mutation.mutate();
 			mutation.mutate();
@@ -85,7 +98,12 @@ public class PacmanPopulation {
 		
 		//pop.evolve();
 	}
-	
+
+
+	/*public List<BehaviorNodePacman> retrieveAllNodes(BehaviorNodePacman node){
+		node.getNodes();
+
+	}*/
 
 
 }

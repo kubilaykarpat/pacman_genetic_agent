@@ -23,5 +23,10 @@ public abstract class BooleanTerminalNodePacman extends TerminalNodePacman {
 	}
 	
 	public abstract boolean getData(ExtendedGamePacman extended_game);
+
+	@Override
+	public FunctionNodePacman.TargetPacman getTarget() {
+		return FunctionNodePacman.TargetPacman.Boolean;
+	}
 	
 }

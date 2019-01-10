@@ -1,6 +1,7 @@
 package evolution.behaviortree.pacman.terminalnodes.numericalnodes;
 
 import evolution.behaviortree.pacman.BehaviorNodePacman;
+import evolution.behaviortree.pacman.functionnodes.FunctionNodePacman;
 import evolution.behaviortree.pacman.terminalnodes.TerminalNodePacman;
 import evolution.pacmanevaluation.ExtendedGamePacman;
 
@@ -44,5 +45,10 @@ public abstract class NumberTerminalNodePacman extends TerminalNodePacman{
 	}
 
 	public abstract double getData(ExtendedGamePacman extendedgame);
+
+	@Override
+	public FunctionNodePacman.TargetPacman getTarget() {
+		return FunctionNodePacman.TargetPacman.Numerical;
+	}
 
 }
