@@ -15,7 +15,7 @@ import java.util.logging.SimpleFormatter;
 
 public class PacmanExperiment {
 
-    private static final int POPULATION_SIZE = 500;
+    private static final int POPULATION_SIZE = 1000;
     private static final int NUMBER_OF_FITNESS_EVALUATIONS = 1;
     private static final int NUMBER_OF_TEST_RUNGS = 3;
     private static final int NUMBER_OF_GENERATIONS = 50;
@@ -96,26 +96,6 @@ public class PacmanExperiment {
                 .setGraphicsDaemon(true).build();
 
         po.runGame(pacman, new POCommGhosts(50), 40);
-    }
-
-    @SuppressWarnings("resource")
-    public static void main(String[] args) {
-        for (int i = 0; i < 1; i++) {
-            PacmanExperiment PacmanExperiment = new PacmanExperiment("pacmanevaluation");
-            PacmanExperiment.evolve();
-
-            PacmanExperiment.evolution_statistics.disp();
-        }
-
-		/*
-		Scanner input = new Scanner(System.in);
-		System.out.println("type 'yes' in case you want to see the result");
-	    String answer = input.nextLine();
-
-		if (answer.equals("yes")){
-			simulate(PacmanExperiment.folder);
-		}
-		 */
     }
 
     public String getFolder() {
@@ -238,5 +218,25 @@ public class PacmanExperiment {
         double averagefitness = sum / (NUMBER_OF_FITNESS_EVALUATIONS * pacmanPopulation.getSize());
 
         evolution_statistics.addGenerationPacman(bestFitness, averagefitness, bestPacman);
+    }
+
+    @SuppressWarnings("resource")
+    public static void main(String[] args) {
+        for (int i = 0; i < 8; i++) {
+            PacmanExperiment PacmanExperiment = new PacmanExperiment("pacmanevaluation");
+            PacmanExperiment.evolve();
+
+            PacmanExperiment.evolution_statistics.disp();
+        }
+
+		/*
+		Scanner input = new Scanner(System.in);
+		System.out.println("type 'yes' in case you want to see the result");
+	    String answer = input.nextLine();
+
+		if (answer.equals("yes")){
+			simulate(PacmanExperiment.folder);
+		}
+		 */
     }
 }
