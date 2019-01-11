@@ -1,13 +1,13 @@
 package evolution;
 
 import evolution.behaviortree.BehaviorTreePacman;
+import org.apache.commons.lang3.Range;
 import pacman.Executor;
 import pacman.controllers.examples.po.POCommGhosts;
 import pacman.game.util.Stats;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -15,14 +15,19 @@ import java.util.logging.SimpleFormatter;
 
 public class PacmanExperiment {
 
-    private static final int POPULATIONSIZE = 500;
-    private static final int FITNESSEVLUATIONS = 1;
-    private static final int TESTRUNS = 3;
-    private static final int NR_GENERATIONS = 50;
-    public static Logger logger;
-    public Statistics evolution_statistics;
-    PacmanPopulation pacmanindividuals;
-    Random RANDOM = new Random();
+    private static final int POPULATION_SIZE = 500;
+    private static final int NUMBER_OF_FITNESS_EVALUATIONS = 1;
+    private static final int NUMBER_OF_TEST_RUNGS = 3;
+    private static final int NUMBER_OF_GENERATIONS = 50;
+
+    private static Range<Float> CROSS_OVER_RANGE = Range.between(0.3f, 0.1f);
+    private static Range<Integer> TOURNAMENT_SIZE_RANGE = Range.between(2, 5);
+    private static float MUTATION_RATE = 0.1f;
+    private static float ELITISIM_RATE = 0.3f;
+
+    private static Logger logger;
+    private Statistics evolution_statistics;
+    private PacmanPopulation pacmanPopulation;
     private String folder;
 
 
@@ -75,7 +80,7 @@ public class PacmanExperiment {
             e.printStackTrace();
         }
 
-        pacmanindividuals = new PacmanPopulation(POPULATIONSIZE);
+        pacmanPopulation = new PacmanPopulation(POPULATION_SIZE);
     }
 
     public static void simulate(String folder) {
@@ -117,30 +122,67 @@ public class PacmanExperiment {
         return this.folder;
     }
 
+    /**
+     * Get appropriate number from given range proportioned by given normalizedRatio
+     *
+     * @param rateRange       Any rate range
+     * @param normalizedRatio between 0 and 1
+     * @return A float within rateRange
+     */
+    public static float scaleWithRateFloatRange(Range<Float> rateRange, float normalizedRatio) {
+        float diff = rateRange.getMaximum() - rateRange.getMinimum();
+        return rateRange.getMinimum() + diff * normalizedRatio;
+    }
+
+    /**
+     * Get appropriate number from given range proportioned by given normalizedRatio
+     *
+     * @param rateRange       Any rate range
+     * @param normalizedRatio between 0 and 1
+     * @return A double within rateRange
+     */
+    public static int scaleWithRateIntRange(Range<Integer> rateRange, float normalizedRatio) {
+        int diff = rateRange.getMaximum() - rateRange.getMinimum();
+        return Math.round(rateRange.getMinimum() + diff * normalizedRatio);
+    }
+
     public void evolve(int generations, boolean storeFinalResult) {
+        int numberOfMutations = (int) (POPULATION_SIZE * MUTATION_RATE);
+        int numberOfElites = (int) (POPULATION_SIZE * ELITISIM_RATE);
+
         this.evolution_statistics = new Statistics(generations);
 
         for (int i = 0; i < generations; i++) {
+            float generationProgressRation = (float) (i + 1) / generations;
+            logger.info("--------------------------------------------");
             logger.info("Evolution: " + i);
 
-            logger.info("determine Fitness");
+            float currentCrossOverRate = scaleWithRateFloatRange(CROSS_OVER_RANGE, generationProgressRation);
+            int numberOfCrossOvers = (int) (POPULATION_SIZE * currentCrossOverRate);
+            logger.info("Number of cross overs: " + numberOfCrossOvers);
+            pacmanPopulation.crossOver(numberOfCrossOvers);
+
+            logger.info("Number of mutations: " + numberOfMutations);
+            pacmanPopulation.mutation(numberOfMutations);
+
+            logger.info("Current population count: " + pacmanPopulation.getSize());
+
+            logger.info("Determine Fitness");
             determineFitness(evolution_statistics);
-            logger.info("best Fitness: " + evolution_statistics.getLatestFitnessPacman());
+            logger.info("Best Fitness: " + evolution_statistics.getLatestBestFitnessPacman());
+
+            int currentTournamenSize = scaleWithRateIntRange(TOURNAMENT_SIZE_RANGE, 1 - generationProgressRation);
+            logger.info("Current tournament count: " + pacmanPopulation.getSize());
+            pacmanPopulation.selection(numberOfElites, currentTournamenSize);
 
             //record the best team from this generation
-            logger.info("store replay");
+            logger.info("Store replay");
             BehaviorTreePacman bestPacman = evolution_statistics.getLatestPacman();
-//			GAGhosts ghosts = new GAGhosts(bestTeam.get(0),bestTeam.get(1),bestTeam.get(2),bestTeam.get(3));
 
-            //Executor po = new Executor(true, true, true);
-            //po.setDaemon(true);
-            //po.runGameTimedRecorded(new MyPacMan(), ghosts, false, this.folder + File.separator + "replay"+ i + ".rpl");
-
-            logger.info("store bestTeam");
+            logger.info("Store bestTeam");
             bestPacman.storeToFile(this.folder + File.separator + "Pacman" + File.separator + "Pacman" + i + ".xml");
 
             logger.info("Selection and Mutation");
-            pacmanindividuals.evolve();
 
         }
         evolution_statistics.storeToFile(this.folder + File.separator + "Statistic.csv");
@@ -148,19 +190,19 @@ public class PacmanExperiment {
         if (storeFinalResult) {
             logger.info("storeFinalResult");
 
-            for (int i = 0; i < pacmanindividuals.getSize(); i++) {
-                pacmanindividuals.getIndividual(i).storeToFile(this.folder + File.separator + "FinalResult" + File.separator + "Pacman" + i + ".xml");
+            for (int i = 0; i < pacmanPopulation.getSize(); i++) {
+                pacmanPopulation.getIndividual(i).storeToFile(this.folder + File.separator + "FinalResult" + File.separator + "Pacman" + i + ".xml");
             }
         }
     }
 
     public void evolve() {
-        this.evolve(NR_GENERATIONS, true);
+        this.evolve(NUMBER_OF_GENERATIONS, true);
     }
 
     public void determineFitness(Statistics evolution_statistics) {
         double bestFitness = 0;
-        double[] fitnessvalues = new double[FITNESSEVLUATIONS * pacmanindividuals.getSize()];
+        double[] fitnessValues = new double[NUMBER_OF_FITNESS_EVALUATIONS * pacmanPopulation.getSize()];
 
         BehaviorTreePacman bestPacman = BehaviorTreePacman.createRandomBehaviourTreePacman();
 
@@ -172,28 +214,28 @@ public class PacmanExperiment {
         POCommGhosts ghosts = new POCommGhosts();
         GAPacman pacman;
 
-        for (int i = 0; i < FITNESSEVLUATIONS; i++) {
-            pacmanindividuals.shuffle();
+        for (int i = 0; i < NUMBER_OF_FITNESS_EVALUATIONS; i++) {
+            pacmanPopulation.shuffle();
 
-            for (int j = 0; j < pacmanindividuals.getSize(); j++) {
-                pacman = new GAPacman(pacmanindividuals.getIndividual(j));
+            for (int j = 0; j < pacmanPopulation.getSize(); j++) {
+                pacman = new GAPacman(pacmanPopulation.getIndividual(j));
 
-                Stats[] stats = po.runExperiment(pacman, ghosts, TESTRUNS, "test");
+                Stats[] stats = po.runExperiment(pacman, ghosts, NUMBER_OF_TEST_RUNGS, "test");
                 double fitness = stats[0].getAverage();
-                fitnessvalues[j + i * pacmanindividuals.getSize()] = fitness;
+                fitnessValues[j + i * pacmanPopulation.getSize()] = fitness;
 
-                pacmanindividuals.getIndividual(j).addFitnessValue(fitness);
+                pacmanPopulation.getIndividual(j).addFitnessValue(fitness);
 
                 if (fitness > bestFitness) {
                     bestFitness = fitness;
-                    bestPacman = pacmanindividuals.getIndividual(j);
+                    bestPacman = pacmanPopulation.getIndividual(j);
                 }
             }
         }
         double sum = 0;
-        for (int i = 0; i < fitnessvalues.length; i++)
-            sum += fitnessvalues[i];
-        double averagefitness = sum / (FITNESSEVLUATIONS * pacmanindividuals.getSize());
+        for (int i = 0; i < fitnessValues.length; i++)
+            sum += fitnessValues[i];
+        double averagefitness = sum / (NUMBER_OF_FITNESS_EVALUATIONS * pacmanPopulation.getSize());
 
         evolution_statistics.addGenerationPacman(bestFitness, averagefitness, bestPacman);
     }

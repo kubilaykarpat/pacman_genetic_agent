@@ -5,18 +5,20 @@ import evolution.behaviortree.BehaviorTreePacman;
 import evolution.behaviortree.functionnodes.FunctionNodePacman;
 import util.Utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static util.Utils.RANDOM;
 
 public class PacmanPopulation {
     private static final Logger LOGGER = Logger.getLogger(PacmanPopulation.class.getName());
     private static final int MAX_LOOP = 100;
-    private final int numberOfElites;
-    private final int numberOfCrossOvers;
+
+
     private List<BehaviorTreePacman> individuals;
     private int population_size;
 
@@ -26,49 +28,35 @@ public class PacmanPopulation {
             individuals.add(BehaviorTreePacman.createRandomBehaviourTreePacman());
         }
         this.population_size = size;
-        this.numberOfElites = Math.max(1, size / 3); // We will keep size/3 best individuals
-        this.numberOfCrossOvers = numberOfElites; //Math.max(1, (size - numberOfElites) / 2); // We will create size/6 individuals with cross over
-        // Rest of the individuals will be created by mutation
     }
 
-    public static void main(String[] args) {
-        PacmanPopulation pop = new PacmanPopulation(7);
-        pop.getIndividual(0).addFitnessValue(1.0);
-        pop.getIndividual(1).addFitnessValue(3.0);
-        pop.getIndividual(2).addFitnessValue(-3.0);
-        pop.getIndividual(3).addFitnessValue(0.0);
-        pop.getIndividual(4).addFitnessValue(7.0);
-        pop.getIndividual(5).addFitnessValue(-5.0);
-        pop.getIndividual(6).addFitnessValue(2.0);
 
-        Collections.sort(pop.individuals);
-        for (BehaviorTreePacman p : pop.individuals)
-            System.out.println(p.getFitness());
-
-        //pop.evolve();
-    }
-
-    public void evolve() {
-        selection();
-        crossOver();
-        mutation();
-
-        for (BehaviorTreePacman individual : individuals) {
-            individual.clearFitness();
-        }
-
-    }
-
-    private void selection() {
+    public void selection(int numberOfElites, int tournamentSize) {
         // natural selection
         Collections.sort(individuals);
 
-        individuals = individuals.subList(0, numberOfElites);
+        List<BehaviorTreePacman> candidates = individuals.subList(numberOfElites, individuals.size()); // Then deal with the rest
+        individuals = new ArrayList<>(individuals.subList(0, numberOfElites)); // Always pick the elites
+
+        int numberOfOpenPositions = population_size - numberOfElites;
+
+        for (int i = 0; i < numberOfOpenPositions; i++) {
+            List<BehaviorTreePacman> tournamentNodes = RANDOM.ints(tournamentSize, 0, candidates.size()).mapToObj(candidates::get).collect(Collectors.toList());
+            BehaviorTreePacman winner = null;
+            for (BehaviorTreePacman tournamentNode : tournamentNodes) {
+                if (winner == null || tournamentNode.getFitness() > winner.getFitness())
+                    winner = tournamentNode;
+            }
+            individuals.add(winner);
+            candidates.remove(winner);
+        }
     }
 
-    private void crossOver() {
-        while (this.individuals.size() < numberOfElites + numberOfCrossOvers) {
-            BehaviorTreePacman firstTree = this.individuals.get(RANDOM.nextInt(numberOfElites));
+    public void crossOver(int numberOfNewBreeds) {
+        int lastPopulationSize = this.individuals.size();
+
+        for (int i = 0; i < numberOfNewBreeds; i++) {
+            BehaviorTreePacman firstTree = this.individuals.get(RANDOM.nextInt(lastPopulationSize));
             BehaviorTreePacman newTree = firstTree.copy();
             List<BehaviorNodePacman> nodesOfFirstTree = newTree.getNodes();
             BehaviorNodePacman parentOfCutPoint = Utils.pickRandomElementFromList(nodesOfFirstTree);
@@ -86,7 +74,7 @@ public class PacmanPopulation {
             // So we should keep looking in other trees
             int count = 0;
             while (count < MAX_LOOP) {
-                BehaviorTreePacman secondTree = this.individuals.get(RANDOM.nextInt(numberOfElites));
+                BehaviorTreePacman secondTree = this.individuals.get(RANDOM.nextInt(lastPopulationSize));
                 // One might think that first and second tree should not be the same individual
                 // yet it still provides diversity! So we will not check whether those 2 trees are same or not
 
@@ -97,7 +85,6 @@ public class PacmanPopulation {
                 if (suitableSubTree != null) {
                     suitableSubTree = suitableSubTree.copy(); // We should not alter the original tree
                 }
-
                 count++;
             }
 
@@ -105,24 +92,14 @@ public class PacmanPopulation {
 
             ((FunctionNodePacman) parentOfCutPoint).overrideChildren(cutPoint, suitableSubTree);
             individuals.add(newTree);
-
-            /*LOGGER.info("CROSS OVER BABY");
-            System.out.println("<------- CROSS OVER STARTED------->");
-            System.out.println("Source: ");
-            firstTree.toString();
-            System.out.println("Selected sub-tree: ");
-            suitableSubTree.disp(1);
-            System.out.println("Result: ");
-            newTree.toString();
-            System.out.println("<------- CROSS OVER FINISHED ------->");*/
         }
     }
 
-    private void mutation() {
-        BehaviorTreePacman mutation;
+    public void mutation(int numberOfNewBreeds) {
+        int lastPopulationSize = this.individuals.size();
 
-        while (this.individuals.size() < population_size) {
-            mutation = this.individuals.get(RANDOM.nextInt(numberOfElites)).copy();
+        for (int i = 0; i < numberOfNewBreeds; i++) {
+            BehaviorTreePacman mutation = this.individuals.get(RANDOM.nextInt(lastPopulationSize)).copy();
             mutation.mutate();
             mutation.mutate();
             mutation.mutate();
@@ -142,12 +119,5 @@ public class PacmanPopulation {
     public BehaviorTreePacman getIndividual(int i) {
         return individuals.get(i);
     }
-
-
-	/*public List<BehaviorNodePacman> retrieveAllNodes(BehaviorNodePacman node){
-		node.getNodes();
-
-	}*/
-
 
 }

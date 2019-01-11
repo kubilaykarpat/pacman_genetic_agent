@@ -21,7 +21,7 @@ public class Statistics {
         this.averageFitnessGhosts = new double[generations];
         this.bestFitnessPacman = new double[generations];
         this.averageFitnessPacman = new double[generations];
-        this.bestPacman = new LinkedList<BehaviorTreePacman>();
+        this.bestPacman = new LinkedList<>();
 
     }
 
@@ -46,7 +46,7 @@ public class Statistics {
         return averageFitnessGhosts[generationGhosts - 1];
     }
 
-    public double getLatestFitnessPacman() {
+    public double getLatestBestFitnessPacman() {
         return bestFitnessPacman[generationPacman - 1];
     }
 
