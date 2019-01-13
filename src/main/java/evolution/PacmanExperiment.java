@@ -20,7 +20,7 @@ public class PacmanExperiment {
     private static final int NUMBER_OF_TEST_RUNGS = 3;
     private static final int NUMBER_OF_GENERATIONS = 50;
 
-    private static Range<Float> CROSS_OVER_RANGE = Range.between(0.3f, 0.1f);
+    private static Range<Float> CROSS_OVER_RANGE = Range.between(0.1f, 0.3f);
     private static Range<Integer> TOURNAMENT_SIZE_RANGE = Range.between(2, 5);
     private static float MUTATION_RATE = 0.1f;
     private static float ELITISIM_RATE = 0.3f;
@@ -126,6 +126,70 @@ public class PacmanExperiment {
         return Math.round(rateRange.getMinimum() + diff * normalizedRatio);
     }
 
+    @SuppressWarnings("resource")
+    public static void main(String[] args) {
+        for (int i = 0; i < 3; i++) {
+            PacmanExperiment PacmanExperiment = new PacmanExperiment("pacmanevaluation");
+            PacmanExperiment.evolve();
+
+            PacmanExperiment.evolution_statistics.disp();
+        }
+
+		/*
+		Scanner input = new Scanner(System.in);
+		System.out.println("type 'yes' in case you want to see the result");
+	    String answer = input.nextLine();
+
+		if (answer.equals("yes")){
+			simulate(PacmanExperiment.folder);
+		}
+		 */
+    }
+
+    public void evolve() {
+        this.evolve(NUMBER_OF_GENERATIONS, true);
+    }
+
+    public void determineFitness(Statistics evolution_statistics) {
+        double bestFitness = 0;
+        double[] fitnessValues = new double[NUMBER_OF_FITNESS_EVALUATIONS * pacmanPopulation.getSize()];
+
+        BehaviorTreePacman bestPacman = BehaviorTreePacman.createRandomBehaviourTreePacman();
+
+        Executor po = new Executor.Builder()
+                .setPacmanPO(true)
+                .setGhostPO(true)
+                .setGhostsMessage(true)
+                .setGraphicsDaemon(true).build();
+        POCommGhosts ghosts = new POCommGhosts();
+        GAPacman pacman;
+
+        for (int i = 0; i < NUMBER_OF_FITNESS_EVALUATIONS; i++) {
+            pacmanPopulation.shuffle();
+
+            for (int j = 0; j < pacmanPopulation.getSize(); j++) {
+                pacman = new GAPacman(pacmanPopulation.getIndividual(j));
+
+                Stats[] stats = po.runExperiment(pacman, ghosts, NUMBER_OF_TEST_RUNGS, "test");
+                double fitness = stats[0].getAverage();
+                fitnessValues[j + i * pacmanPopulation.getSize()] = fitness;
+
+                pacmanPopulation.getIndividual(j).addFitnessValue(fitness);
+
+                if (fitness > bestFitness) {
+                    bestFitness = fitness;
+                    bestPacman = pacmanPopulation.getIndividual(j);
+                }
+            }
+        }
+        double sum = 0;
+        for (int i = 0; i < fitnessValues.length; i++)
+            sum += fitnessValues[i];
+        double averagefitness = sum / (NUMBER_OF_FITNESS_EVALUATIONS * pacmanPopulation.getSize());
+
+        evolution_statistics.addGenerationPacman(bestFitness, averagefitness, bestPacman);
+    }
+
     public void evolve(int generations, boolean storeFinalResult) {
         int numberOfMutations = (int) (POPULATION_SIZE * MUTATION_RATE);
         int numberOfElites = (int) (POPULATION_SIZE * ELITISIM_RATE);
@@ -137,7 +201,7 @@ public class PacmanExperiment {
             logger.info("--------------------------------------------");
             logger.info("Evolution: " + i);
 
-            float currentCrossOverRate = scaleWithRateFloatRange(CROSS_OVER_RANGE, generationProgressRation);
+            float currentCrossOverRate = scaleWithRateFloatRange(CROSS_OVER_RANGE, 1 - generationProgressRation);
             int numberOfCrossOvers = (int) (POPULATION_SIZE * currentCrossOverRate);
             logger.info("Number of cross overs: " + numberOfCrossOvers);
             pacmanPopulation.crossOver(numberOfCrossOvers);
@@ -151,7 +215,7 @@ public class PacmanExperiment {
             determineFitness(evolution_statistics);
             logger.info("Best Fitness: " + evolution_statistics.getLatestBestFitnessPacman());
 
-            int currentTournamenSize = scaleWithRateIntRange(TOURNAMENT_SIZE_RANGE, 1 - generationProgressRation);
+            int currentTournamenSize = scaleWithRateIntRange(TOURNAMENT_SIZE_RANGE, generationProgressRation);
             logger.info("Current tournament count: " + pacmanPopulation.getSize());
             pacmanPopulation.selection(numberOfElites, currentTournamenSize);
 
